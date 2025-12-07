@@ -15,15 +15,6 @@ public class BookHistoryController implements IBookHistoryController {
 	}
 	
 //	-------------------------------------------------------------------------------------------------
-	@Override
-	public BookHistory save(BookHistory bookHistory) {
-		try {
-			return bookHistoryService.save(bookHistory);
-		}catch (Exception e){
-			System.err.println(e.getMessage());
-		}
-		return null;
-	}
 	
 	@Override
 	public boolean delete(long storyID) {

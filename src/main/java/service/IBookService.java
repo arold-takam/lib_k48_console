@@ -1,6 +1,8 @@
 package service;
 
 import model.Book;
+import model.BookHistory;
+import myEnum.ActionStatus;
 import myEnum.SortAlgorithm;
 import myEnum.SortOrder;
 
@@ -31,4 +33,7 @@ public interface IBookService {
 	
 	//	----------------------------------------------------------------------------------------------------------------
 	ArrayList<Book>sortByTitle(SortOrder sortOrder, SortAlgorithm sortAlgorithm);
+	
+//	HiSTORY METHOD------------------------------------------------------------------------------------------------
+	void historySave(String action, ActionStatus status, String details);
 }

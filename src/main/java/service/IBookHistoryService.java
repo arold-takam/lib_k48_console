@@ -6,8 +6,6 @@ import java.util.LinkedList;
 
 public interface IBookHistoryService{
 	
-	BookHistory save(BookHistory bookHistory);
-	
 	boolean delete(long storyID);
 	
 	//	-------------------------------------------------------------------------------------------------------

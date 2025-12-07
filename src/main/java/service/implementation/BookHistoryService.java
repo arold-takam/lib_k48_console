@@ -15,10 +15,6 @@ public class BookHistoryService implements IBookHistoryService {
 	}
 	
 //	------------------------------------------------------------------------------------------------------------------------
-	@Override
-	public BookHistory save(BookHistory bookHistory) {
-		return bookHistoryRepository.save(bookHistory);
-	}
 	
 	@Override
 	public boolean delete(long storyID) {

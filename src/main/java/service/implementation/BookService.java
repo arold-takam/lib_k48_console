@@ -1,8 +1,11 @@
 package service.implementation;
 
 import model.Book;
+import model.BookHistory;
+import myEnum.ActionStatus;
 import myEnum.SortAlgorithm;
 import myEnum.SortOrder;
+import repository.IBookHistoryRepository;
 import repository.IBookRepository;
 import service.IBookService;
 import validation.BookValidation;
@@ -14,10 +17,12 @@ public class BookService implements IBookService {
 	private List<String>errorList = new ArrayList<>();
 	
 	private final IBookRepository bookRepository;
+	private final IBookHistoryRepository bookHistoryRepository;
 	private final BookValidation validation;
 	
-	public BookService(IBookRepository bookRepository, BookValidation validation) {
+	public BookService(IBookRepository bookRepository, IBookHistoryRepository bookHistoryRepository, BookValidation validation) {
 		this.bookRepository = bookRepository;
+		this.bookHistoryRepository = bookHistoryRepository;
 		this.validation = validation;
 	}
 	
@@ -26,8 +31,11 @@ public class BookService implements IBookService {
 		errorList.clear();
 		errorList = validation.validateSave(book);
 		if (!errorList.isEmpty()){
+			historySave("Save", ActionStatus.FAILED, "On book: "+book.getTitle());
 			throw new IllegalArgumentException("Invalid Book to save: "+errorList);
 		}
+		
+		historySave("Save", ActionStatus.SUCCEED, "On book: "+book.getTitle());
 		
 		return bookRepository.save(book);
 	}
@@ -37,8 +45,12 @@ public class BookService implements IBookService {
 		errorList.clear();
 		errorList = validation.validateUpdate(bookID, newBook);
 		if (!errorList.isEmpty()){
+			historySave("Update", ActionStatus.FAILED, "For book: "+newBook.getTitle());
+			
 			throw new IllegalArgumentException("Invalid Book to save: "+errorList);
 		}
+		
+		historySave("Update", ActionStatus.SUCCEED, "With book: "+newBook.getTitle());
 		
 		return bookRepository.update(bookID, newBook);
 	}
@@ -48,8 +60,11 @@ public class BookService implements IBookService {
 		errorList.clear();
 		errorList = validation.validateDelete(bookID);
 		if (!errorList.isEmpty()){
+			historySave("Delete", ActionStatus.FAILED, "With ID: "+bookID);
 			throw new NoSuchElementException("No book found with the ID: "+bookID);
 		}
+		
+		historySave("Delete", ActionStatus.SUCCEED, "With ID: "+bookID);
 		
 		return bookRepository.delete(bookID);
 	}
@@ -61,6 +76,8 @@ public class BookService implements IBookService {
 		
 		update(book.getId(), book);
 		
+		historySave("Borrow", ActionStatus.SUCCEED, "On book: "+book.getTitle());
+		
 		return book;
 	}
 	
@@ -70,6 +87,8 @@ public class BookService implements IBookService {
 		book.setBorrowed(false);
 		
 		update(book.getId(), book);
+		
+		historySave("Return", ActionStatus.SUCCEED, "On book: "+book.getTitle());
 		
 		return book;
 	}
@@ -102,5 +121,17 @@ public class BookService implements IBookService {
 	@Override
 	public ArrayList<Book> sortByTitle(SortOrder sortOrder, SortAlgorithm sortAlgorithm) {
 		return bookRepository.sortByTitle(sortOrder, sortAlgorithm);
+	}
+	
+//	HiSTORY METHOD------------------------------------------------------------------------------------------------
+	@Override
+	public void historySave(String action, ActionStatus status, String details) {
+		BookHistory bookHistory = new BookHistory();
+		
+		bookHistory.setActionName(action);
+		bookHistory.setStatus(status);
+		bookHistory.setDetails(details);
+		
+		bookHistoryRepository.save(bookHistory);
 	}
 }

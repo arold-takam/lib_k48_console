@@ -5,7 +5,6 @@ import myEnum.ActionStatus;
 import java.util.LinkedList;
 
 public interface IBookHistoryController {
-	BookHistory save(BookHistory bookHistory);
 	
 	boolean delete(long storyID);
 	

@@ -2,7 +2,6 @@ package view;
 
 import controller.IBookController;
 import model.Book;
-
 import java.util.ArrayList;
 import java.util.Scanner;
 
